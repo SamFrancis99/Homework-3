@@ -35,16 +35,6 @@ top_20 = coronavirus %>%
   arrange(-total_cases) %>%
   head(20)
 
-bottom_20 = coronavirus %>%
-  # filter the data set by confirmed cases
-  filter(type == "confirmed") %>%
-  # group the confirmed cases by country
-  group_by(country) %>%
-  # create a new data frame entitled "total_cases" which is the sum of confirmed cases by country
-  summarise(total_cases = sum(cases)) %>%
-  arrange(total_cases) %>%
-  head(20)
-
   # Part B
     # Convert the total_cases to a vector format
 top_5_cases_vector = as.vector(top_20$total_cases) %>% head(5)
