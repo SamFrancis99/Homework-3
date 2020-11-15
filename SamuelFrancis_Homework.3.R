@@ -24,6 +24,7 @@ head(coronavirus, 100)
 
 # Question 2
   # Part A
+    # Loading the dplyr package
 library(dplyr)
 top_20 = coronavirus %>%
     # filter the data set by confirmed cases
@@ -57,3 +58,32 @@ barplot(top_5_cases_vector,
         horiz     = TRUE,
     # Changing the title of the bar plot
         main      = "Top 5 countries by total cases")
+
+
+# Question 3
+  # Part A
+library(tidyr)
+    # Creating data frame called recent_cases
+recent_cases = coronavirus %>%
+    # filter by confirmed cases
+  filter(type == "confirmed") %>%
+    # creating a grouping variable
+  group_by(date) %>%
+    # creating a column in the data frame that is the sum of total cases
+    # these sums of total cases are grouped the grouping variable dates created earlier
+  summarise(total_cases = sum(cases))
+
+    # reverse the order of the recent_cases data frame by date so that the most recent date is first
+recent_cases = recent_cases[rev(order(as.Date(recent_cases$date, format = "%y/%m/%d"))),]
+
+  # Part B
+    # create a cases vector to input into the plot function
+cases_by_date_vector = as.vector(recent_cases$total_cases)
+    # create a dates vector to input into the plot function
+dates_vector         = as.Date(recent_cases$date)
+    # creating a line plot
+plot(dates_vector,cases_by_date_vector,
+     type            = "l",
+     main            = "Coronavirus Cases by Date",
+     xlab            = "Dates",
+     ylab            = "Total Cases")
