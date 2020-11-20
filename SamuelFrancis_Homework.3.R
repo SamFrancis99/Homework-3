@@ -42,10 +42,10 @@ top_20 = coronavirus %>%
     # Creating a top 5 data set
 top_5 = top_20 %>% head(5)
     # Creating the top 5 bar graph
-top_5_bar_graph = ggplot(data = top_5,
-                         aes(x = country,
-                             y = total_cases)) + 
-  geom_bar(stat="identity")
+top_5_bar_graph = ggplot(data   = top_5,
+                         aes(x  = country,
+                             y  = total_cases)) + 
+                  geom_bar(stat = "identity")
     # Displaying the top 5 bar graph
 top_5_bar_graph
 
@@ -77,10 +77,10 @@ recent_cases = recent_cases[rev(order(as.Date(recent_cases$date, format = "%y/%m
 
   # Part B =================================
     # Creating the line plot
-recent_cases_line_plot = ggplot(data  = recent_cases, 
-                                aes(x = date,
-                                    y = total_cases,
-                                    group=1)) +
+recent_cases_line_plot = ggplot(data      = recent_cases, 
+                                aes(x     = date,
+                                    y     = total_cases,
+                                    group = 1)) +
   geom_line()
     # Displaying the line plot
 recent_cases_line_plot
