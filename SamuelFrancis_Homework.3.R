@@ -1,18 +1,22 @@
-# Question 1
-  # Part A
+# Question 1 --------------------------------
+  # Part A =================================
     # Installing all the necessary packages to analyze the data
 install.packages("coronavirus")
-install.packages("backports")
 install.packages("devtools")
+install.packages("ggplot2")
 devtools::install_github("RamiKrispin/coronavirus")
-    # Loading and updating the coronavirus dataset
+    # Loading the coronavirus dataset
 library(coronavirus)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(grid)
 
-  # Part B
+  # Part B =================================
     # Showing the first 100 rows of the coronavirus dataset
 head(coronavirus, 100)
 
-  # Part C
+  # Part C =================================
     # date - The date of the summary
     # province - The province or state, when applicable
     # country - The country or region name
@@ -22,10 +26,8 @@ head(coronavirus, 100)
     # cases - the number of daily cases (corresponding to the case type)
 
 
-# Question 2
-  # Part A
-    # Loading the dplyr package
-library(dplyr)
+# Question 2 --------------------------------
+  # Part A =================================
 top_20 = coronavirus %>%
     # filter the data set by confirmed cases
   filter(type == "confirmed") %>%
@@ -36,33 +38,30 @@ top_20 = coronavirus %>%
   arrange(-total_cases) %>%
   head(20)
 
-  # Part B
-    # Convert the total_cases to a vector format
-top_5_cases_vector = as.vector(top_20$total_cases) %>% head(5)
-    # convert the countries to a vector format
-top_5_countries_vector = as.vector(top_20$country) %>% head(5)
-    # Create a barplot of the total_cases in the top_5_cases_vector and assign
-    # the country names the each bar)
-barplot(top_5_cases_vector, 
-        names.arg = top_5_countries_vector)
+  # Part B =================================
+    # Creating a top 5 data set
+top_5 = top_20 %>% head(5)
+    # Creating the top 5 bar graph
+top_5_bar_graph = ggplot(data = top_5,
+                         aes(x = country,
+                             y = total_cases)) + 
+  geom_bar(stat="identity")
+    # Displaying the top 5 bar graph
+top_5_bar_graph
 
-  # Part C
-barplot(top_5_cases_vector, 
-        names.arg = top_5_countries_vector, 
-    # Converting the bar plot to a horizontal format
-         horiz     = TRUE)
+  # Part C =================================
+    # Switching to horizontal
+top_5_bar_graph + coord_flip()
 
-  # Part D
-barplot(top_5_cases_vector, 
-        names.arg = top_5_countries_vector, 
-        horiz     = TRUE,
-    # Changing the title of the bar plot
-        main      = "Top 5 countries by total cases")
+  # Part D =================================
+    # Putting a title on the graph
+top_5_bar_graph = top_5_bar_graph + ggtitle("Top 5 countries by total cases")
+    # Displaying the bar graph with a title
+top_5_bar_graph
 
 
-# Question 3
-  # Part A
-library(tidyr)
+# Question 3 --------------------------------
+  # Part A =================================
     # Creating data frame called recent_cases
 recent_cases = coronavirus %>%
     # filter by confirmed cases
@@ -76,14 +75,90 @@ recent_cases = coronavirus %>%
     # reverse the order of the recent_cases data frame by date so that the most recent date is first
 recent_cases = recent_cases[rev(order(as.Date(recent_cases$date, format = "%y/%m/%d"))),]
 
-  # Part B
-    # create a cases vector to input into the plot function
-cases_by_date_vector = as.vector(recent_cases$total_cases)
-    # create a dates vector to input into the plot function
-dates_vector         = as.Date(recent_cases$date)
-    # creating a line plot
-plot(dates_vector,cases_by_date_vector,
-     type            = "l",
-     main            = "Coronavirus Cases by Date",
-     xlab            = "Dates",
-     ylab            = "Total Cases")
+  # Part B =================================
+    # Creating the line plot
+recent_cases_line_plot = ggplot(data  = recent_cases, 
+                                aes(x = date,
+                                    y = total_cases,
+                                    group=1)) +
+  geom_line()
+    # Displaying the line plot
+recent_cases_line_plot
+
+
+# Extra Credit All changes start from the default bar plot or line plot --------------------------------
+
+  # 1. Changing Width of the Bars
+ggplot(data     = top_5,
+       aes(x    = country,
+           y    = total_cases)) + 
+  geom_bar(stat ="identity", width=0.5)
+
+  # 2. Changing the Color of the Bars
+ggplot(data      = top_5,
+       aes(x     = country,
+           y     = total_cases)) + 
+  geom_bar(stat  ="identity", 
+           color = "blue",
+           fill  = "white")
+
+  # 3. Adding Labels to the bars
+ggplot(data           = top_5,
+       aes(x          = country,
+           y          = total_cases)) + 
+  geom_bar(stat       = "identity") +
+  geom_text(aes(label = total_cases), 
+            vjust     = -0.3,
+            size      = 3.5)
+
+  # 4. Adding a legend to the bar graph
+ggplot(data           = top_5,
+       aes(x          = country,
+           y          = total_cases,
+           fill       = country)) + 
+  geom_bar(stat       = "identity")
+
+  # 5. Changing the legend position
+ggplot(data             = top_5,
+       aes(x            = country,
+           y            = total_cases,
+           fill         = country)) + 
+  geom_bar(stat         = "identity") +
+  theme(legend.position = "bottom")
+
+  # 6. Adding Points to the lines
+ggplot(data      = recent_cases, 
+       aes(x     = date,
+           y     = total_cases,
+           group = 1)) +
+  geom_line() +
+  geom_point()
+
+  # 7. Changing the line type
+ggplot(data          = recent_cases, 
+       aes(x         = date,
+           y         = total_cases,
+           group     = 1)) +
+  geom_line(linetype = "dashed")
+
+  # 8. Changing the line color
+ggplot(data       = recent_cases, 
+       aes(x      = date,
+           y      = total_cases,
+           group  = 1)) +
+  geom_line(color = "green")
+
+  # 9. Adding arrows to the line plot
+ggplot(data       = recent_cases, 
+       aes(x      = date,
+           y      = total_cases,
+           group  = 1)) +
+  geom_line(arrow = arrow(
+             type = "closed"
+  ))
+  # 10. Changing the connection type of the line plot
+ggplot(data       = recent_cases, 
+       aes(x      = date,
+           y      = total_cases,
+           group  = 1)) + 
+  geom_step()
